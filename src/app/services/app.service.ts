@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { TOKEN_DATA, TOKEN_MICRO } from './constants/constants';
+import { Observable, of } from 'rxjs';
+import { catchError, first } from 'rxjs/operators';
+import {
+  TOKEN_DATA,
+  API_URL,
+  TOKEN_SCOPE_TYPES,
+  TOKEN_GRANT_TYPES,
+} from '../constants/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +16,13 @@ export class AppService {
   constructor(private _httpClient: HttpClient) {}
 
   getToken(): Observable<any> {
+    const url = `${API_URL}${TOKEN_DATA.micro}`;
     const options = {
       params: {
-        grant_type: 'password',
+        grant_type: TOKEN_GRANT_TYPES.PASSWORD,
         username: TOKEN_DATA.user.username,
         password: TOKEN_DATA.user.password,
-        scope: 'uaa.user',
+        scope: TOKEN_SCOPE_TYPES.USER,
       },
       headers: {
         Authorization: 'Basic d2ViZmctdGVzdDpXVzU4WUpqODlsdFI0M0Ny',
@@ -24,6 +30,9 @@ export class AppService {
       },
     };
 
-    return this._httpClient.post(TOKEN_MICRO, null, options).pipe(first());
+    return this._httpClient.post(url, null, options).pipe(
+      first(),
+      catchError((error) => of(error))
+    );
   }
 }
