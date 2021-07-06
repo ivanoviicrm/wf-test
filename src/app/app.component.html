@@ -1,1 +1,14 @@
-<h1>test</h1>
+<h1>Market Data</h1>
+
+<div *ngIf="tableLoading">Loading data...</div>
+
+<table *ngIf="!tableLoading">
+  <tr>
+    <th>key data:</th>
+  </tr>
+  <tr *ngFor="let item of marketData; index as i; trackBy: trackByFn">
+    <td>{{ item.name }}</td>
+    <td>{{ item.valueD }}</td>
+    <td>{{ item.valueV }}</td>
+  </tr>
+</table>
